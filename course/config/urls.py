@@ -26,5 +26,6 @@ urlpatterns = [
     path('api/', include('users.urls')),           # /api/users/
     # path('api/', include('enrollments.urls')),     # /api/enrollments/
     # path('api/', include('payments.urls')),        # /api/payments/
-    # path('api/', include('reviews.urls')),         # /api/reviews/
+    # path('api/', include('reviews.urls')), 
+    path('api/', include('courses.urls')),
 ]

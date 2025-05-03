@@ -4,9 +4,11 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from .models import User
 from .serializers import Userserializers
-from .services import create_user, update_user, delete_user, get_users, get_user_by_id
-
+from .services import create_user, update_user, delete_user, get_users, get_user_by_id, register, login, refresh_token
+from utils.permissions import RolePermissionFactory
 class UserListView(APIView):
+    print("UserListView")
+    permission_classes = [RolePermissionFactory("Student")]
     def get(self, request):
         users = get_users()
         serializer = Userserializers(users, many=True)
@@ -42,3 +44,19 @@ class UserDetailView(APIView):
             return Response(result, status=status.HTTP_200_OK)
         except ValidationError as e:
             return Response({"errors": e.detail}, status=status.HTTP_404_NOT_FOUND)
+
+class UserRegisterView(APIView):
+    def post(self, request):
+        try:
+            user = register(request.data)
+            return Response(Userserializers(user).data, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
+class UserLoginView(APIView):
+    def post(self, request):
+        try:
+            user = login(request.data)
+            return Response(user, status=status.HTTP_200_OK)
+        except ValidationError as e:
+            return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)

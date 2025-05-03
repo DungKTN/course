@@ -1,6 +1,13 @@
 from rest_framework.exceptions import ValidationError
 from .models import User
 from .serializers import Userserializers
+from config import settings
+from django.contrib.auth.hashers import make_password, check_password
+from datetime import datetime, timedelta
+from django.utils import timezone
+import jwt
+JWT_SECRET = settings.SECRET_KEY
+JWT_ALGORITHM = "HS256"
 
 def create_user(data):
     serializer = Userserializers(data=data)
@@ -48,3 +55,76 @@ def get_user_by_id(user_id):
             return serializer.data
         except User.DoesNotExist:
             raise ValidationError({"error": "User not found."})
+def register(data):
+    data['status'] = 'Inactive'
+    data['user_type'] = 'Student'
+    data['password_hash'] = make_password(data['password'])
+    serializer = Userserializers(data=data)
+    if serializer.is_valid(raise_exception=True):
+        user = serializer.save()
+        return user
+    return create_user(data)
+    raise ValidationError(serializer.errors)
+def login(data):
+    try:
+        if data['username'] and data['password']:
+            user = User.objects.get(username=data['username'])
+    except User.DoesNotExist:
+         raise ValidationError({"error": "User not found."})
+    if not check_password(data['password'], user.password_hash):
+        raise ValidationError({"error": "Invalid password."})
+    if user.status != 'Active':
+        raise ValidationError({"error": "User is not active."})
+    
+    payload = {
+        'user_id': user.user_id,
+        'username': user.username,
+        'email': user.email,
+        'user_type': user.user_type,
+        'exp': datetime.utcnow() + timedelta(minutes=30),
+        "iat": datetime.utcnow()
+    }
+    access_token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+    refresh_payload = {
+        'user_id': user.user_id,
+        'username': user.username,
+        'email': user.email,
+        'user_type': user.user_type,
+        'exp': datetime.utcnow() + timedelta(days=3),
+        "iat": datetime.utcnow()
+    }
+    refresh_token = jwt.encode(refresh_payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    return {
+        'access_token': access_token,
+        'refresh_token': refresh_token,
+        'user': {
+            'user_id': user.user_id,
+            'username': user.username,
+            'email': user.email,
+        }
+    }
+def refresh_token(token):
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=JWT_ALGORITHM)
+        user = User.objects.get(user_id=payload['user_id'])
+    except jwt.ExpiredSignatureError:
+        raise ValidationError({"error": "Token has expired."})
+    except jwt.InvalidTokenError:
+        raise ValidationError({"error": "Invalid token."})
+    except User.DoesNotExist:
+        raise ValidationError({"error": "User not found."})
+
+    new_payload = {
+        'user_id': user.user_id,
+        'username': user.username,
+        'email': user.email,
+        'user_type': user.user_type,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30),
+        "iat": datetime.utcnow()
+    }
+    new_token = jwt.encode(new_payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    return {
+        'access_token': new_token,
+        'message': "Token refreshed successfully.",
+    }

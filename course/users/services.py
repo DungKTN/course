@@ -1,6 +1,6 @@
 from rest_framework.exceptions import ValidationError
 from .models import User
-from .serializers import Userserializers
+from .serializers import Userserializers, UserUpdateBySelfSerializer
 from config import settings
 from django.contrib.auth.hashers import make_password, check_password
 from datetime import datetime, timedelta
@@ -16,7 +16,18 @@ def create_user(data):
         return user
     raise ValidationError(serializer.errors)
 
-def update_user(user_id, data):
+def update_user_by_selfself(user_id, data):
+    try:
+        user = User.objects.get(user_id=user_id)
+    except User.DoesNotExist:
+        raise ValidationError({"error": "User not found."})
+    
+    serializer = UserUpdateBySelfSerializer(user, data=data, partial=True)
+    if serializer.is_valid(raise_exception=True):
+        updated_user = serializer.save()
+        return updated_user
+    raise ValidationError(serializer.errors)
+def update_user_by_admin(user_id, data):
     try:
         user = User.objects.get(user_id=user_id)
     except User.DoesNotExist:
@@ -27,6 +38,7 @@ def update_user(user_id, data):
         updated_user = serializer.save()
         return updated_user
     raise ValidationError(serializer.errors)
+
 
 def delete_user(user_id):
     try:
@@ -60,11 +72,8 @@ def register(data):
     data['user_type'] = 'Student'
     data['password_hash'] = make_password(data['password'])
     serializer = Userserializers(data=data)
-    if serializer.is_valid(raise_exception=True):
-        user = serializer.save()
-        return user
-    return create_user(data)
-    raise ValidationError(serializer.errors)
+    serializer.is_valid(raise_exception=True)
+    return serializer.save()
 def login(data):
     try:
         if data['username'] and data['password']:
@@ -75,7 +84,8 @@ def login(data):
         raise ValidationError({"error": "Invalid password."})
     if user.status != 'Active':
         raise ValidationError({"error": "User is not active."})
-    
+    user.last_login = timezone.now()
+    user.save()
     payload = {
         'user_id': user.user_id,
         'username': user.username,

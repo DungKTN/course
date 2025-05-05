@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class User(models.Model):
     class StatusChoices(models.TextChoices):
         ACTIVE = 'Active', 'Active'
@@ -21,11 +22,13 @@ class User(models.Model):
     address = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(blank=True, null=True)
+
     status = models.CharField(
         max_length=8,
         choices=StatusChoices.choices,
         default=StatusChoices.ACTIVE
     )
+
     user_type = models.CharField(
         max_length=10,
         choices=UserTypeChoices.choices

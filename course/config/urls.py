@@ -28,4 +28,5 @@ urlpatterns = [
     # path('api/', include('payments.urls')),        # /api/payments/
     # path('api/', include('reviews.urls')), 
     path('api/', include('courses.urls')),
+    path('api/', include('instructors.urls')),
 ]

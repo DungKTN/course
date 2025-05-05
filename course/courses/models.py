@@ -13,7 +13,7 @@ class Course(models.Model):
         PUBLISHED = 'Published'
         REJECTED = 'Rejected'
         ARCHIVED = 'Archived'
-
+    course_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     instructor_id = models.IntegerField()
@@ -48,5 +48,9 @@ class Course(models.Model):
     total_students = models.IntegerField(default=0)
     certificate = models.BooleanField(default=False)
 
+    class Meta:
+        db_table = 'Courses'
+        
     def __str__(self):
         return self.title
+

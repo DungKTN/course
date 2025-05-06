@@ -1,3 +1,17 @@
-__pycache__/
+# Ignore all __pycache__ directories
+**/__pycache__/
+
+# Ignore all .pyc files
+**/*.pyc
+
+# Ignore database file
+db.sqlite3
+
+# Ignore logs
+django.log
+
+# Ignore virtual environment
+.venv/
+
 *.pyc
-*.pyd
+__pycache__/

@@ -29,4 +29,5 @@ urlpatterns = [
     # path('api/', include('reviews.urls')), 
     path('api/', include('courses.urls')),
     path('api/', include('instructors.urls')),
+    path('api/', include('categories.urls')),
 ]

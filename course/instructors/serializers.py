@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from .models import Instructor
 from users.models import User
+from users.serializers import Userserializers  # Giả sử bạn đã có serializer cho User
 
 class InstructorSerializers(serializers.ModelSerializer):
     user_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='user', write_only=True
     )  # Thêm trường user_id để nhận pk
-
+    user = Userserializers(read_only=True)
     class Meta:
         model = Instructor
         fields = [

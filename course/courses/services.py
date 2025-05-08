@@ -1,7 +1,6 @@
 from rest_framework.exceptions import ValidationError
 from .models import Course
 from .serializers import CourseSerializer
-
 def create_course(data):
     serializer = CourseSerializer(data=data)
     if serializer.is_valid(raise_exception=True):
@@ -43,6 +42,7 @@ def get_all_courses():
         raise ValidationError({"error": "No courses found."})
     serializer = CourseSerializer(courses, many=True)
     return serializer.data
+
 
 def validate_course_data(data):
     serializer = CourseSerializer(data=data)

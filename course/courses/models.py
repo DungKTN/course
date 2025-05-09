@@ -1,4 +1,6 @@
 from django.db import models
+from instructors.models import Instructor
+from categories.models import Category
 
 class Course(models.Model):
     class Level(models.TextChoices):
@@ -16,7 +18,9 @@ class Course(models.Model):
     course_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    instructor_id = models.IntegerField()
+
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='courses')
+    
     category_id = models.IntegerField()
     subcategory_id = models.IntegerField(blank=True, null=True)
     thumbnail = models.CharField(max_length=255, blank=True, null=True)

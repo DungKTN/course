@@ -3,6 +3,11 @@ from .models import Course
 from .serializers import CourseSerializer
 
 def create_course(data):
+    try:
+        instructor_instance = data.pop('instructor')  # Lấy instructor từ data
+        category_instance = data.pop('category')  # Lấy category từ data
+    except KeyError:
+        raise ValidationError({"instructor": "Missing required fields."})
     serializer = CourseSerializer(data=data)
     if serializer.is_valid(raise_exception=True):
         course = serializer.save()

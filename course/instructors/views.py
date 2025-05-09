@@ -17,6 +17,7 @@ class InstructorListView(APIView):
     def get(self, request):
         instructors = get_instructors()
         serializer = InstructorSerializers(instructors, many=True) # Tuần tự hóa queryset
+    # sửa đổi lại để trả về danh sách
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

@@ -4,16 +4,16 @@ from users.models import User
 from users.serializers import Userserializers  # Giả sử bạn đã có serializer cho User
 
 class InstructorSerializers(serializers.ModelSerializer):
-    user_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='user', write_only=True
-    )  # Thêm trường user_id để nhận pk
-    user = Userserializers(read_only=True)
+    # user_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=User.objects.all(), source='user', write_only=True
+    # )  # Thêm trường user_id để nhận pk
+    # user = Userserializers(read_only=True)
     class Meta:
         model = Instructor
         fields = [
             'instructor_id',
             'user_id',  # Sử dụng user_id để tạo/ghi
-            'user',  # Trả về thông tin user đầy đủ khi đọc
+            # 'user',  # Trả về thông tin user đầy đủ khi đọc
             'bio',
             'specialization',
             'qualification',

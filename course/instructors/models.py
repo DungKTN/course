@@ -4,7 +4,7 @@ from users.models import User
 
 class Instructor(models.Model):
     instructor_id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
+    user_id = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
 
     bio = models.TextField(null=True, blank=True)
     specialization = models.CharField(max_length=255, null=True, blank=True)
@@ -18,6 +18,9 @@ class Instructor(models.Model):
     total_courses = models.IntegerField(default=0)
 
     payment_info = models.JSONField(null=True, blank=True)
+
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'Instructors'

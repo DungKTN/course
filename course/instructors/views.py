@@ -16,16 +16,10 @@ class InstructorListView(APIView):
     print("InstructorListView")
     def get(self, request):
         instructors = get_instructors()
-        serializer = InstructorSerializers(instructors, many=True)
+        serializer = InstructorSerializers(instructors, many=True) # Tuần tự hóa queryset
+    # sửa đổi lại để trả về danh sách
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class InstructorCreateView(APIView):
-    def post(self, request):
-        try:
-            instructor = create_instructor(request.data)
-            return Response(InstructorSerializers(instructor).data, status=status.HTTP_201_CREATED)
-        except ValidationError as e:
-            return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
 class InstructorDetailView(APIView):
     def get(self, request, instructor_id):
@@ -48,3 +42,12 @@ class InstructorDetailView(APIView):
             return Response(result, status=status.HTTP_200_OK)
         except ValidationError as e:
             return Response({"errors": e.detail}, status=status.HTTP_404_NOT_FOUND)
+
+class InstructorCreateView(APIView):
+    def post(self, request):
+        try:
+            instructor = create_instructor(request.data)
+            return Response(InstructorSerializers(instructor).data, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
+

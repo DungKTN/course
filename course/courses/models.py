@@ -2,6 +2,7 @@ from django.db import models
 from instructors.models import Instructor
 from categories.models import Category
 
+
 class Course(models.Model):
     class Level(models.TextChoices):
         BEGINNER = 'Beginner'
@@ -19,10 +20,9 @@ class Course(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
 
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='courses')
-    
-    category_id = models.IntegerField()
-    subcategory_id = models.IntegerField(blank=True, null=True)
+    instructor_id = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='courses',null=True)
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='courses', null=True)
+    subcategory_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='courses', null=True)
     thumbnail = models.CharField(max_length=255, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -55,6 +55,8 @@ class Course(models.Model):
     class Meta:
         db_table = 'Courses'
         
-    def __str__(self):
-        return self.title
+def __str__(self):
+    return f"Course {self.course_id} - {self.instructor.full_name}"
+
+
 

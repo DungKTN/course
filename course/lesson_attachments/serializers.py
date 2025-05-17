@@ -14,3 +14,6 @@ class LessonAttachmentSerializer(serializers.ModelSerializer):
             'download_count',
             'created_date',
         ]
+        read_only_fields = [
+            'attachment_id', 'created_date', 'download_count'
+        ]

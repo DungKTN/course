@@ -1,13 +1,9 @@
 from django.db import models
-from lessons.models import Lesson  # hoặc đúng app chứa Lesson
+from lessons.models import Lesson
 
 class LessonAttachment(models.Model):
     attachment_id = models.AutoField(primary_key=True)
-    lesson = models.ForeignKey(
-        Lesson,
-        on_delete=models.CASCADE,
-        db_column='LessonID'  # Trùng tên cột trong DB
-    )
+    lesson_id = models.ForeignKey(Lesson,on_delete=models.CASCADE,related_name='attachments')
     title = models.CharField(max_length=255, null=True, blank=True)
     file_path = models.CharField(max_length=255)
     file_type = models.CharField(max_length=50, null=True, blank=True)

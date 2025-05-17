@@ -7,7 +7,7 @@ class CourseModule(models.Model):
         ('Published', 'Published'),
     ]
 
-    id = models.AutoField(primary_key=True)  # ModuleID
+    module_id = models.AutoField(primary_key=True)
     course_id = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='modules')  # CourseID
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)

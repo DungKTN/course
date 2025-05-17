@@ -6,11 +6,11 @@ class Enrollment(models.Model):
     class Status(models.TextChoices):
         Active = "active"
         Complete = "complete"
-        Expired = "exoired"
+        Expired = "expired"
         Cancelled = "cancelled"
     enrollment_id = models.AutoField(primary_key=True)
-    user_id = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
-    course_id = models.OneToOneField(Course)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='enrollment_user')
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollment_course')
     enrollment_date = models.DateTimeField(blank=True, null=True)
     expiry_date = models.DateTimeField(blank=True, null = True)
     completion_date = models.DateTimeField(blank=True, null = True)
@@ -25,6 +25,9 @@ class Enrollment(models.Model):
     last_access_date = models.DateTimeField(null=True, blank=True)
     class Meta:
         db_table = 'Enrollments'
+        constraints = [
+            models.UniqueConstraint(fields=['user_id', 'course_id'], name='unique_enrollment')
+        ]
         
 def __str__(self):
     return f"Enrollment {self.status} - {self.certificate}"

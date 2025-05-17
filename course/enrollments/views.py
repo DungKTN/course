@@ -14,7 +14,7 @@ from .services import (
 from .models import Enrollment
 from utils.permissions import RolePermissionFactory
 
-class EnrollmentManageByUser(APIView):
+class EnrollmentManageByUserView(APIView):
     permission_classes = [RolePermissionFactory(['admin', 'instructor', 'student'])]
 
     def get(self, request):

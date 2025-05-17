@@ -56,7 +56,7 @@ class Course(models.Model):
         db_table = 'Courses'
         
 def __str__(self):
-    return f"Course {self.course_id} - {self.instructor.full_name}"
+    return f"Course {self.course_id} - {self.title}"
 
 
 

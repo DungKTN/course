@@ -37,11 +37,7 @@ def create_instructor(data):
     # Cập nhật user_type thành 'Instructor'
     user_instance.user_type = User.UserTypeChoices.INSTRUCTOR
     user_instance.save()
-
-    # Sửa đổi data để truyền user instance, không phải user_id
-    modified_data = data.copy()  # Tạo bản sao để không ảnh hưởng đến dữ liệu gốc
-    modified_data['user'] = user_instance
-    serializer = InstructorSerializers(data=modified_data, context={'request': None})  # Truyền modified_data
+    serializer = InstructorSerializers(data=data, context={'request': None})  # Truyền modified_data
     if serializer.is_valid(raise_exception=True):
         instructor = serializer.save()
         return instructor

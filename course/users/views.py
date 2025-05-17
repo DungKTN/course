@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from .serializers import Userserializers, UserUpdateBySelfSerializer
 from .services import create_user, update_user_by_admin, delete_user, get_users, get_user_by_id, register, login, refresh_token, update_user_by_selfself
 from utils.permissions import RolePermissionFactory
+from .models import User
 class UserManagementView(APIView):
     permission_classes = [RolePermissionFactory("admin")]
     def post(self, request):
@@ -12,7 +13,7 @@ class UserManagementView(APIView):
             user = create_user(request.data)
             return Response(Userserializers(user).data, status=status.HTTP_201_CREATED)
         except ValidationError as e:
-            return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)    
+            return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
     def get(self, request):
         users = get_users()
         serializer = Userserializers(users, many=True)

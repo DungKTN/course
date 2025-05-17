@@ -68,8 +68,8 @@ def get_user_by_id(user_id):
         except User.DoesNotExist:
             raise ValidationError({"error": "User not found."})
 def register(data):
-    data['status'] = 'Inactive'
-    data['user_type'] = 'Student'
+    data['status'] = 'inactive'
+    data['user_type'] = 'student'
     data['password_hash'] = make_password(data['password'])
     serializer = Userserializers(data=data)
     serializer.is_valid(raise_exception=True)
@@ -82,7 +82,7 @@ def login(data):
          raise ValidationError({"error": "User not found."})
     if not check_password(data['password'], user.password_hash):
         raise ValidationError({"error": "Invalid password."})
-    if user.status != 'Active':
+    if user.status != 'active':
         raise ValidationError({"error": "User is not active."})
     user.last_login = timezone.now()
     user.save()

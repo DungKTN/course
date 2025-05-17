@@ -7,7 +7,6 @@ JWT_SECRET = settings.SECRET_KEY
 def RolePermissionFactory(roles):
     class _RolePermission(BasePermission):
         def has_permission(self, request, view):
-            print("Reqsuest Headers:")
             auth_header = request.headers.get("Authorization")
             if not auth_header or not auth_header.startswith("Bearer "):
                 raise AuthenticationFailed("Thiếu token hoặc sai định dạng.")
@@ -21,10 +20,16 @@ def RolePermissionFactory(roles):
                 raise AuthenticationFailed("Token không hợp lệ.")
 
             user_type = payload.get("user_type")
+            print(roles)
+            if not user_type:
+                raise AuthenticationFailed("Không tìm thấy thông tin người dùng trong token.")
+            # if user_type:
+            #     raise AuthenticationFailed("Role hiện tại: {}".format(user_type))
             if user_type not in (roles if isinstance(roles, list) else [roles]):
                 raise PermissionDenied("Bạn không có quyền truy cập.")
 
             request.jwt_payload = payload
+            request.user = payload.get("user_id")
             return True
 
     return _RolePermission

@@ -21,8 +21,8 @@ class Course(models.Model):
     description = models.TextField(blank=True, null=True)
 
     instructor_id = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='courses',null=True)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='courses', null=True)
-    subcategory_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='courses', null=True)
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category_courses', null=True)
+    subcategory_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='subcategory_courses', null=True)
     thumbnail = models.CharField(max_length=255, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)

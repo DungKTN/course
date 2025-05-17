@@ -41,7 +41,7 @@ class LessonDetailView(APIView):
             return Response({"errors": e.detail}, status=status.HTTP_404_NOT_FOUND)
         
 class LessonCreateView(APIView):
-    permission_classes = [RolePermissionFactory(["Instructor", "Admin"])]
+    permission_classes = [RolePermissionFactory(["instructor", "admin"])]
     def post(self, request):
         try:
             lesson = create_lesson(request.data, request.user)

@@ -5,17 +5,17 @@ from categories.models import Category
 
 class Course(models.Model):
     class Level(models.TextChoices):
-        BEGINNER = 'Beginner'
-        INTERMEDIATE = 'Intermediate'
-        ADVANCED = 'Advanced'
-        ALL_LEVELS = 'All Levels'
+        BEGINNER = 'beginner'
+        INTERMEDIATE = 'intermediate'
+        ADVANCED = 'advanced'
+        ALL_LEVELS = 'all_levels'
 
     class Status(models.TextChoices):
-        DRAFT = 'Draft'
-        PENDING = 'Pending'
-        PUBLISHED = 'Published'
-        REJECTED = 'Rejected'
-        ARCHIVED = 'Archived'
+        DRAFT = 'draft'
+        PENDING = 'pending'
+        PUBLISHED = 'published'
+        REJECTED = 'rejected'
+        ARCHIVED = 'archived'
     course_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
@@ -56,7 +56,7 @@ class Course(models.Model):
         db_table = 'Courses'
         
 def __str__(self):
-    return f"Course {self.course_id} - {self.instructor.full_name}"
+    return f"Course {self.course_id} - {self.title}"
 
 
 

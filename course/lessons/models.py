@@ -4,16 +4,16 @@ from instructors.models import Instructor
 
 class Lesson(models.Model):
     class ContentType(models.TextChoices):
-        VIDEO = 'Video'
-        TEXT = 'Text'
-        QUIZ = 'Quiz'
-        ASSIGNMENT = 'Assignment'
-        FILE = 'File'
-        LINK = 'Link'
+        VIDEO = 'video'
+        TEXT = 'text'
+        QUIZ = 'quiz'
+        ASSIGNMENT = 'assignment'
+        FILE = 'file'
+        LINK = 'link'
 
     class Status(models.TextChoices):
-        DRAFT = 'Draft'
-        PUBLISHED = 'Published'
+        DRAFT = 'draft'
+        PUBLISHED = 'published'
 
     lesson_id = models.AutoField(primary_key=True)
     coursemodule_id = models.ForeignKey(CourseModule, on_delete=models.CASCADE, related_name='lessons')

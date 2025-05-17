@@ -9,7 +9,7 @@ from utils.permissions import RolePermissionFactory
 
 
 class AdminManagementView(APIView):
-    permission_classes = [RolePermissionFactory("Admin")]
+    permission_classes = [RolePermissionFactory("admin")]
     def post(self, request):
         try:
             admin = create_admin(request.data)
@@ -30,7 +30,7 @@ class AdminManagementView(APIView):
             return Response({"errors": e.detail}, status=status.HTTP_404_NOT_FOUND)
 
 class AdminListView(APIView):
-    permission_classes = [RolePermissionFactory("Admin")]
+    permission_classes = [RolePermissionFactory("admin")]
     def get(self, request):
         try:
             admins = get_admins()
@@ -39,7 +39,7 @@ class AdminListView(APIView):
             return Response({"error": e.detail}, status=status.HTTP_404_NOT_FOUND)
 
 class AdminDetailView(APIView):
-    permission_classes = [RolePermissionFactory("Admin")]
+    permission_classes = [RolePermissionFactory("admin")]
     def get(self, request, admin_id):
         try:
             admin = get_admin_by_id(admin_id)

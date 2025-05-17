@@ -3,14 +3,14 @@ from django.db import models
 
 class User(models.Model):
     class StatusChoices(models.TextChoices):
-        ACTIVE = 'Active', 'Active'
-        INACTIVE = 'Inactive', 'Inactive'
-        BANNED = 'Banned', 'Banned'
+        ACTIVE = 'active', 'active'
+        INACTIVE = 'inactive', 'inactive'
+        BANNED = 'banned', 'banned'
 
     class UserTypeChoices(models.TextChoices):
-        STUDENT = 'Student', 'Student'
-        INSTRUCTOR = 'Instructor', 'Instructor'
-        ADMIN = 'Admin', 'Admin'
+        STUDENT = 'student', 'student'
+        INSTRUCTOR = 'instructor', 'instructor'
+        ADMIN = 'admin', 'admin'
 
     user_id = models.AutoField(primary_key=True)
     

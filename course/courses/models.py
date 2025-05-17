@@ -5,24 +5,24 @@ from categories.models import Category
 
 class Course(models.Model):
     class Level(models.TextChoices):
-        BEGINNER = 'Beginner'
-        INTERMEDIATE = 'Intermediate'
-        ADVANCED = 'Advanced'
-        ALL_LEVELS = 'All Levels'
+        BEGINNER = 'beginner'
+        INTERMEDIATE = 'intermediate'
+        ADVANCED = 'advanced'
+        ALL_LEVELS = 'all_levels'
 
     class Status(models.TextChoices):
-        DRAFT = 'Draft'
-        PENDING = 'Pending'
-        PUBLISHED = 'Published'
-        REJECTED = 'Rejected'
-        ARCHIVED = 'Archived'
+        DRAFT = 'draft'
+        PENDING = 'pending'
+        PUBLISHED = 'published'
+        REJECTED = 'rejected'
+        ARCHIVED = 'archived'
     course_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
 
     instructor_id = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='courses',null=True)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='courses', null=True)
-    subcategory_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='courses', null=True)
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category_courses', null=True)
+    subcategory_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='subcategory_courses', null=True)
     thumbnail = models.CharField(max_length=255, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)

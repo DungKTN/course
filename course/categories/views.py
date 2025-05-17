@@ -15,7 +15,7 @@ from .serializers import CategoriesSerializer
 from utils.permissions import RolePermissionFactory
 
 class CategoryListView(APIView):
-    permission_classes = [RolePermissionFactory(['Admin', 'Instructor'])]
+    permission_classes = [RolePermissionFactory(['admin', 'instructor'])]
 
     def get(self, request):
         try:
@@ -25,7 +25,7 @@ class CategoryListView(APIView):
             return Response({"error": e.detail}, status=status.HTTP_404_NOT_FOUND)
         
 class CategoryDetailView(APIView):
-    permission_classes = [RolePermissionFactory(['Admin', 'Instructor'])]
+    permission_classes = [RolePermissionFactory(['admin', 'instructor'])]
 
     def get(self, request, category_id):
         try:
@@ -35,7 +35,7 @@ class CategoryDetailView(APIView):
             return Response({"error": e.detail}, status=status.HTTP_404_NOT_FOUND)
     
 class CategoryManagementView(APIView):
-    permission_classes = [RolePermissionFactory(['Admin', 'Instructor'])]
+    permission_classes = [RolePermissionFactory(['admin', 'instructor'])]
 
     def post(self, request):
         try:

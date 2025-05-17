@@ -6,7 +6,7 @@ from .serializers import Userserializers, UserUpdateBySelfSerializer
 from .services import create_user, update_user_by_admin, delete_user, get_users, get_user_by_id, register, login, refresh_token, update_user_by_selfself
 from utils.permissions import RolePermissionFactory
 class UserManagementView(APIView):
-    permission_classes = [RolePermissionFactory("Admin")]
+    permission_classes = [RolePermissionFactory("admin")]
     def post(self, request):
         try:
             user = create_user(request.data)

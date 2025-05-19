@@ -1,6 +1,5 @@
 from django.db import models
 from coursemodules.models import CourseModule
-from instructors.models import Instructor
 
 class Lesson(models.Model):
     class ContentType(models.TextChoices):

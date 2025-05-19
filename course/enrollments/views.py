@@ -36,5 +36,3 @@ class EnrollmentDetailView(APIView):
             return Response(enrollment, status=status.HTTP_200_OK)
         except Enrollment.DoesNotExist:
             return Response({"error": "Enrollment not found."}, status=status.HTTP_404_NOT_FOUND)
-        
-        

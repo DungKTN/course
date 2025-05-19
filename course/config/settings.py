@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'coursemodules',
     'enrollments',
     'lesson_attachments',
+    'quiz_questions',
+    'notifications',
 ]
 
 MIDDLEWARE = [

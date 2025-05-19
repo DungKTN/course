@@ -1,11 +1,9 @@
 from rest_framework.exceptions import ValidationError
 from .models import LessonAttachment
 from .serializers import LessonAttachmentSerializer
-from .models import LessonAttachment
 
 def create_lesson_attachment(data):
     try:
-        print("Data received for lesson attachment creation:", data)
         serializer = LessonAttachmentSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             lesson_attachment = serializer.save()

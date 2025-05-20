@@ -20,7 +20,6 @@ class InstructorListView(APIView):
     # sửa đổi lại để trả về danh sách
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 class InstructorDetailView(APIView):
     def get(self, request, instructor_id):
         try:

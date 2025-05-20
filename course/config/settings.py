@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'lesson_attachments',
     'quiz_questions',
     'notifications',
+    'promotions',
 ]
 
 MIDDLEWARE = [

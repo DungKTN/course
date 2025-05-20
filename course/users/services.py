@@ -91,7 +91,7 @@ def login(data):
         'username': user.username,
         'email': user.email,
         'user_type': user.user_type,
-        'exp': datetime.utcnow() + timedelta(minutes=30),
+        'exp': datetime.utcnow() + timedelta(minutes=300),
         "iat": datetime.utcnow()
     }
     access_token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)

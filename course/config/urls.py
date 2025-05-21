@@ -21,10 +21,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # Tất cả API gói trong /api/
-    # path('api/', include('courses.urls')),         # /api/courses/
     path('api/', include('users.urls')),           # /api/users/
-    # path('api/', include('enrollments.urls')),     # /api/enrollments/
     # path('api/', include('payments.urls')),        # /api/payments/
     # path('api/', include('reviews.urls')), 
     path('api/', include('courses.urls')),
@@ -34,4 +31,7 @@ urlpatterns = [
     path('api/', include('lessons.urls')),
     path('api/', include('coursemodules.urls')),
     path('api/', include('enrollments.urls')),
+    path('api/', include('learning_progress.urls')),
+    path('api/', include('reviews.urls')),
+    path('api/', include('blog_posts.urls')),
 ]

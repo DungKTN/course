@@ -112,6 +112,7 @@ def login(data):
             'user_id': user.user_id,
             'username': user.username,
             'email': user.email,
+            'user_type': user.user_type,
         }
     }
 def refresh_token(token):

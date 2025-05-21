@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     'lessons',
     'coursemodules',
     'enrollments',
+    'reviews',
+    'learning_progress',
+    'blog_posts'
 ]
 
 MIDDLEWARE = [

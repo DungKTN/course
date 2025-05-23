@@ -43,7 +43,6 @@ def create_instructor(data):
         return instructor
     raise ValidationError(serializer.errors)
 
-
 def update_instructor(instructor_id, data):
     try:
         instructor = Instructor.objects.get(instructor_id=instructor_id)

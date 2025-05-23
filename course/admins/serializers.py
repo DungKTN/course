@@ -6,7 +6,7 @@ class AdminSerializer(serializers.ModelSerializer):
         model = Admin
         fields = [
             'admin_id',
-            'user',
+            'user_id',
             'department',
             'role',
             'created_at',

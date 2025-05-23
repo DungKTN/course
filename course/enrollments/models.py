@@ -28,7 +28,7 @@ class Enrollment(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user_id', 'course_id'], name='unique_enrollment')
         ]
-        
+
 def __str__(self):
     return f"Enrollment {self.status} - {self.certificate}"
 

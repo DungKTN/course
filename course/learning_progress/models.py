@@ -10,7 +10,7 @@ class LearningProgress(models.Model):
 
     progress_id = models.AutoField(primary_key=True)
     enrollment_id = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name='learning_progress')
-    lesson_id = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='learning_progress')
+    lesson_id = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='learning_progress_lesson')
     progress = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     last_accessed = models.DateTimeField(auto_now=True)
     status = models.CharField(
@@ -26,5 +26,5 @@ class LearningProgress(models.Model):
     class Meta:
         db_table = 'LearningProgress'
         constraints = [
-            models.UniqueConstraint(fields=['enrollment', 'lesson'], name='unique_learning_progress')
+            models.UniqueConstraint(fields=['enrollment_id', 'lesson_id'], name='unique_learning_progress')
         ]

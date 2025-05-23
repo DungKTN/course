@@ -49,7 +49,11 @@ INSTALLED_APPS = [
     'enrollments',
     'reviews',
     'learning_progress',
-    'blog_posts'
+    'blog_posts',
+    'lesson_attachments',
+    'quiz_questions',
+    'notifications',
+    'promotions',
 ]
 
 MIDDLEWARE = [

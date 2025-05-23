@@ -1,6 +1,5 @@
 from django.db import models
-from courses.models import Course
-from instructors.models import Instructor
+from coursemodules.models import CourseModule
 
 class Lesson(models.Model):
     class ContentType(models.TextChoices):
@@ -16,7 +15,7 @@ class Lesson(models.Model):
         PUBLISHED = 'published'
 
     lesson_id = models.AutoField(primary_key=True)
-    coursemodule_id = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons')
+    coursemodule_id = models.ForeignKey(CourseModule, on_delete=models.CASCADE, related_name='lessons')
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)

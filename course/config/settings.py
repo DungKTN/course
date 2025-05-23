@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'quiz_questions',
     'notifications',
     'promotions',
+    'carts',
+    'wishlists',
 ]
 
 MIDDLEWARE = [

@@ -6,6 +6,8 @@ from instructors.models import Instructor
 from enrollments.models import Enrollment
 from notifications.models import Notification
 from promotions.models import Promotion
+from carts.models import Cart
+from wishlists.models import Wishlist
 # from reviews.models import Review
 admin.site.register(User)
 admin.site.register(Course)
@@ -17,3 +19,5 @@ admin.site.register(Enrollment)
 # admin.site.register(Review)
 admin.site.register(Notification)
 admin.site.register(Promotion)
+admin.site.register(Cart)
+admin.site.register(Wishlist)

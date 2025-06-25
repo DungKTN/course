@@ -1,7 +1,6 @@
 from django.db import models
 from users.models import User
 from courses.models import Course
-
 class Payment(models.Model):
     class PaymentStatus(models.TextChoices):
         PENDING = 'pending', 'pending'
@@ -13,8 +12,8 @@ class Payment(models.Model):
         VNPAY = 'vnpay', 'vnpay'
         MOMO = 'momo', 'momo'
     payment_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment-user')
-    course_id = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='payment-course')
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_user_id')
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='payment_course_id')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, null=False)

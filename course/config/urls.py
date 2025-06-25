@@ -22,7 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('api/', include('users.urls')),           # /api/users/
-    # path('api/', include('payments.urls')),        # /api/payments/
+    path('api/', include('payments.urls')),        # /api/payments/
     # path('api/', include('reviews.urls')), 
     path('api/', include('courses.urls')),
     path('api/', include('instructors.urls')),
@@ -38,4 +38,6 @@ urlpatterns = [
     path('api/', include('quiz_questions.urls')),
     path('api/', include('notifications.urls')),
     path('api/', include('promotions.urls')),
+    path('api/', include('carts.urls')),
+    path('api/', include('wishlists.urls'))
 ]

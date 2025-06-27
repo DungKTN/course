@@ -7,8 +7,8 @@ class PaymentSerializer(serializers.ModelSerializer):
         fields = [
             'payment_id',
             'user_id',
-            'course_id',
             'amount',
+            'promotion_id', 
             'discount_amount',
             'total_amount',
             'transaction_id',
@@ -21,3 +21,16 @@ class PaymentSerializer(serializers.ModelSerializer):
             'payment_gateway',
             'gateway_response'
         ]
+class PaymentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = [
+            'payment_id',
+            'user_id',
+            'amount',
+            'promotion_id', 
+            'discount_amount',
+            'total_amount',
+            'payment_method',
+        ]
+        read_only_fields = []

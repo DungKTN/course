@@ -1,178 +1,59 @@
+from django.db import transaction
 from rest_framework.exceptions import ValidationError
-from .serializers import PaymentSerializer
+from .serializers import PaymentSerializer, PaymentCreateSerializer
 from .models import Payment
-from datetime import datetime
-from courses.models import Course
-from django.db import IntegrityError
-import hashlib
-import hmac
-import urllib.parse
-from django.http import JsonResponse, HttpRequest
-from django.utils import timezone
-from datetime import timedelta
-import hashlib
-import pytz
-from datetime import datetime
-from payments.vnpay import vnpay
-from django.conf import settings
-# from orders.models import Order
-# VNPAY cấu hình
+from promotions.models import Promotion
+from payment_details.serializers import PaymentDetailSerializer
+from .utils import generate_unique_transaction_id
 
-vnp_TmnCode = '9AHLD0UQ'
-vnp_HashSecret = 'BNPD5VQ9RUUJ9E3YVLEUHLF2EDA8AAYC'
-vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
-vnp_ReturnUrl = 'http://127.0.0.1:8000/api/vnpay/return/'
+def create_payment(payment_data):
+    try:
+        with transaction.atomic():
+            # 1. Validate payment
+            payment_serializer = PaymentCreateSerializer(data={
+                'user_id': payment_data.get('user_id'),
+                'amount': payment_data.get('amount'),
+                'promotion_id': payment_data.get('promotion_id'),
+                'discount_amount': payment_data.get('discount_amount', 0),
+                'total_amount': payment_data.get('total_amount'),
+                'payment_method': payment_data.get('payment_method'),
+                'transaction_id': generate_unique_transaction_id(),
+            })
 
+            if not payment_serializer.is_valid():
+                raise ValidationError({"payment": payment_serializer.errors})
 
-def get_payment_url(vnpay_payment_url, params, secret_key):
-    # Sắp xếp các tham số theo thứ tự alphabet
-    input_data = sorted(params.items())
-    query_string = ''
-    seq = 0
-    for key, val in input_data:
-        if seq == 1:
-            query_string += "&" + key + '=' + urllib.parse.quote_plus(str(val))
-        else:
-            seq = 1
-            query_string = key + '=' + urllib.parse.quote_plus(str(val))
+            promotion_id = payment_serializer.validated_data.get('promotion_id')
+            if promotion_id and not Promotion.objects.filter(promotion_id=promotion_id).exists():
+                print("⚠️ Promotion không tồn tại – tiếp tục không áp dụng khuyến mãi.")
+            payment = payment_serializer.save()
+            print("✅ Payment created successfully: %s", payment.payment_id)
+            payment_detail_data = payment_data.get('payment_details')
+            if not payment_detail_data:
+                raise ValidationError("Thiếu thông tin chi tiết thanh toán (payment_details)")
+            payment_detail_arr = [
+                {
+                    'payment_id': payment.payment_id,
+                    'course_id': detail.get('course_id'),
+                    'price': detail.get('price'),
+                    'discount': detail.get('discount', 0),
+                    'final_price': detail.get('final_price'),
+                    'primotion_id': detail.get('promotion_id')
+                }
+                for detail in payment_detail_data
+            ]
+            payment_detail_serializer = PaymentDetailSerializer(data=payment_detail_arr, many=True)
 
-    hash_value = hmacsha512(secret_key, query_string)
-    return vnpay_payment_url + "?" + query_string + '&vnp_SecureHash=' + hash_value
+            if not payment_detail_serializer.is_valid():
+                raise ValidationError({"payment_details": payment_detail_serializer.errors})
 
-def hmacsha512(key, data):
-    byteKey = key.encode('utf-8')
-    byteData = data.encode('utf-8')
-    return hmac.new(byteKey, byteData, hashlib.sha512).hexdigest()
+            # 5. Lưu payment_detail
+            payment_detail_serializer.save()
 
-def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+            return {
+                "payment": PaymentSerializer(payment).data,
+                "payment_details": payment_detail_serializer.data
+            }
 
-def create_vnpay_payment(request: HttpRequest):
-    data = request.data if hasattr(request, 'data') else request.GET
-    amount = int(data.get('amount')) * 100
-    order_id = data.get('order_id') or datetime.now().strftime('%Y%m%d%H%M%S')
-    order_desc = data.get('order_desc', f'Thanh toan don hang {order_id}')
-    order_type = data.get('order_type', 'other')
-    language = data.get('language', 'vn')
-    bank_code = data.get('bank_code')
-    ip_address = get_client_ip(request)
-
-    # Lấy thời gian hiện tại theo múi giờ GMT+7
-    tz = pytz.timezone('Asia/Ho_Chi_Minh')
-
-    params = {
-        'vnp_Version': '2.1.0',
-        'vnp_Command': 'pay',
-        'vnp_TmnCode': vnp_TmnCode,
-        'vnp_Amount': str(amount),
-        'vnp_CurrCode': 'VND',
-        'vnp_TxnRef': order_id,
-        'vnp_OrderInfo': order_desc,
-        'vnp_OrderType': order_type,
-        'vnp_ReturnUrl': vnp_ReturnUrl,  # Bỏ order_id khỏi URL nếu trước đó có
-        'vnp_IpAddr': ip_address,
-    }
-    if language and language != '':
-        params['vnp_Locale'] = language
-    else:
-        params['vnp_Locale'] = 'vn'
-
-    if bank_code and bank_code != '':
-        params['vnp_BankCode'] = bank_code
-    params['vnp_CreateDate'] = datetime.now().strftime('%Y%m%d%H%M%S')
-    params['vnp_IpAddr'] = ip_address
-    params['vnp_ReturnUrl'] = vnp_ReturnUrl
-    params['vnp_CreateDate'] = datetime.now(tz).strftime('%Y%m%d%H%M%S')
-    print(f"Creating VNPAY payment with params: {params}")
-    vn_payment_url = get_payment_url(vnp_Url, params, vnp_HashSecret)
-    print(vn_payment_url)
-
-    return JsonResponse({'payment_url': vn_payment_url})
-
-def payment_return(request):
-    inputData = request.GET
-    if inputData:
-        vnp = vnpay()
-        vnp.responseData = inputData.dict()
-        order_id = inputData['vnp_TxnRef']
-        amount = int(inputData['vnp_Amount']) / 100
-        order_desc = inputData['vnp_OrderInfo']
-        vnp_TransactionNo = inputData['vnp_TransactionNo']
-        vnp_ResponseCode = inputData['vnp_ResponseCode']
-        vnp_TmnCode = inputData['vnp_TmnCode']
-        vnp_PayDate = inputData['vnp_PayDate']
-        vnp_BankCode = inputData['vnp_BankCode']
-        vnp_CardType = inputData['vnp_CardType']
-        if vnp.validate_response(settings.VNPAY_HASH_SECRET_KEY):
-            if vnp_ResponseCode == "00":
-                return  {"title": "Kết quả thanh toán",
-                        "result": "Thành công", "order_id": order_id,
-                        "amount": amount,
-                        "order_desc": order_desc,
-                        "vnp_TransactionNo": vnp_TransactionNo,
-                        "vnp_ResponseCode": vnp_ResponseCode}
-            else:
-                return  {"title": "Kết quả thanh toán",
-                        "result": "Lỗi", "order_id": order_id,
-                        "amount": amount,
-                        "order_desc": order_desc,
-                        "vnp_TransactionNo": vnp_TransactionNo,
-                        "vnp_ResponseCode": vnp_ResponseCode}
-        else:
-            return {"title": "Kết quả thanh toán",
-                    "result": "Lỗi", 
-                    "order_id": order_id, 
-                    "amount": amount,
-                    "order_desc": order_desc, "vnp_TransactionNo": vnp_TransactionNo,
-                    "vnp_ResponseCode": vnp_ResponseCode, "msg": "Sai checksum"}
-    else:
-        return {"title": "Kết quả thanh toán", "result": ""}
-
-
-
-def payment_ipn(request):
-    inputData = request.GET
-    if inputData:
-        vnp = vnpay()
-        vnp.responseData = inputData.dict()
-        order_id = inputData['vnp_TxnRef']
-        amount = inputData['vnp_Amount']
-        order_desc = inputData['vnp_OrderInfo']
-        vnp_TransactionNo = inputData['vnp_TransactionNo']
-        vnp_ResponseCode = inputData['vnp_ResponseCode']
-        vnp_TmnCode = inputData['vnp_TmnCode']
-        vnp_PayDate = inputData['vnp_PayDate']
-        vnp_BankCode = inputData['vnp_BankCode']
-        vnp_CardType = inputData['vnp_CardType']
-        if vnp.validate_response(settings.VNPAY_HASH_SECRET_KEY):
-            # Check & Update Order Status in your Database
-            # Your code here
-            firstTimeUpdate = True
-            totalamount = True
-            if totalamount:
-                if firstTimeUpdate:
-                    if vnp_ResponseCode == '00':
-                        print('Payment Success. Your code implement here')
-                    else:
-                        print('Payment Error. Your code implement here')
-
-                    # Return VNPAY: Merchant update success
-                    result = JsonResponse({'RspCode': '00', 'Message': 'Confirm Success'})
-                else:
-                    # Already Update
-                    result = JsonResponse({'RspCode': '02', 'Message': 'Order Already Update'})
-            else:
-                # invalid amount
-                result = JsonResponse({'RspCode': '04', 'Message': 'invalid amount'})
-        else:
-            # Invalid Signature
-            result = JsonResponse({'RspCode': '97', 'Message': 'Invalid Signature'})
-    else:
-        result = JsonResponse({'RspCode': '99', 'Message': 'Invalid request'})
-
-    return result
+    except Exception as e:
+        raise ValidationError(f"Error creating payment: {str(e)}")

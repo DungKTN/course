@@ -1,5 +1,8 @@
 from django.db import models
 from admins.models import Admin
+from instructors.models import Instructor
+from courses.models import Course
+from instructors.models import Instructor
 
 class Promotion(models.Model):
     class DiscountTypeChoices(models.TextChoices):
@@ -22,9 +25,13 @@ class Promotion(models.Model):
     used_count = models.IntegerField(default=0)
     min_purchase = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     max_discount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    applicable_courses = models.JSONField(blank=True, null=True)
-    applicable_categories = models.JSONField(blank=True, null=True)
-    admin_id = models.ForeignKey(Admin, on_delete=models.SET_NULL, related_name='promotions_created', null=True)
+
+    applicable_courses = models.ManyToManyField(Course,blank=True,related_name="promotions")
+    applicable_categories = models.ManyToManyField('categories.Category', blank=True, related_name="promotions")
+
+    admin_id = models.ForeignKey(Admin, on_delete=models.SET_NULL, related_name='promotions_admin', null=True)
+    instructor_id = models.ForeignKey(Instructor, on_delete=models.SET_NULL, related_name='promotions_instructor', null=True)
+    
     status = models.CharField(max_length=10, choices=StatusChoices.choices, default=StatusChoices.ACTIVE)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)

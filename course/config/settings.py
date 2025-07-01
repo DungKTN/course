@@ -53,6 +53,14 @@ INSTALLED_APPS = [
     'promotions',
     'carts',
     'wishlists',
+    'quiz_results',
+    'qnas',
+    'qna_answers',
+    'forums',
+    'forum_topics',
+    'forum_comments',
+    'systems_settings',
+    'supports',
 ]
 
 MIDDLEWARE = [

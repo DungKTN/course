@@ -10,6 +10,7 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = [
             'course_id',
             'title',
+            'shortdescription',
             'description',
             'instructor_id',
             'category_id',
@@ -23,6 +24,7 @@ class CourseSerializer(serializers.ModelSerializer):
             'language',
             'duration',
             'total_lessons',
+            'total_modules',
             'requirements',
             'status',
             'is_featured',

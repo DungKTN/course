@@ -39,5 +39,13 @@ urlpatterns = [
     path('api/', include('notifications.urls')),
     path('api/', include('promotions.urls')),
     path('api/', include('carts.urls')),
-    path('api/', include('wishlists.urls'))
+    path('api/', include('wishlists.urls')),
+    path('api/', include('quiz_results.urls')),
+    path('api/', include('qnas.urls')),
+    path('api/', include('qna_answers.urls')),
+    path('api/', include('forums.urls')),
+    path('api/', include('forum_topics.urls')),
+    path('api/', include('forum_comments.urls')),
+    path('api/', include('systems_settings.urls')),
+    path('api/', include('supports.urls')),
 ]

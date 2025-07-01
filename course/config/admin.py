@@ -8,6 +8,16 @@ from notifications.models import Notification
 from promotions.models import Promotion
 from carts.models import Cart
 from wishlists.models import Wishlist
+from categories.models import Category
+from quiz_questions.models import QuizQuestion
+from quiz_results.models import QuizResult
+from qnas.models import QnA
+from qna_answers.models import QnAAnswer
+from forums.models import Forum
+from forum_topics.models import ForumTopic
+from forum_comments.models import ForumComment
+from systems_settings.models import SystemsSetting
+from supports.models import Support
 # from reviews.models import Review
 admin.site.register(User)
 admin.site.register(Course)
@@ -21,3 +31,13 @@ admin.site.register(Notification)
 admin.site.register(Promotion)
 admin.site.register(Cart)
 admin.site.register(Wishlist)
+admin.site.register(Category)
+admin.site.register(QuizQuestion)
+admin.site.register(QuizResult)
+admin.site.register(QnA)
+admin.site.register(QnAAnswer)
+admin.site.register(Forum)
+admin.site.register(ForumTopic)
+admin.site.register(ForumComment)
+admin.site.register(SystemsSetting)
+admin.site.register(Support)

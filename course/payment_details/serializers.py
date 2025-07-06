@@ -10,5 +10,5 @@ class PaymentDetailSerializer(serializers.ModelSerializer):
             'price',
             'discount',
             'final_price',
-            'primotion_id'
+            'promotion_id'
         ]

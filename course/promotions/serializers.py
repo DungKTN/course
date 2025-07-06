@@ -19,7 +19,8 @@ class PromotionSerializer(serializers.ModelSerializer):
             'max_discount',
             'applicable_courses',
             'applicable_categories',
-            'admin_id',  
+            'admin_id',
+            'instructor_id',
             'status',
             'created_date',
             'updated_date'

@@ -18,6 +18,7 @@ class Course(models.Model):
         ARCHIVED = 'archived'
     course_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
+    shortdescription = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
     instructor_id = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='courses',null=True)
@@ -36,6 +37,7 @@ class Course(models.Model):
     language = models.CharField(max_length=50, default='Tiếng Việt')
     duration = models.IntegerField(help_text="Thời lượng tính bằng phút", blank=True, null=True)
     total_lessons = models.IntegerField(default=0)
+    total_modules = models.IntegerField(default=0)
     requirements = models.TextField(blank=True, null=True)
     status = models.CharField(
         max_length=20,

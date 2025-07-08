@@ -40,7 +40,10 @@ urlpatterns = [
     path('api/', include('promotions.urls')),
     path('api/', include('carts.urls')),
     path('api/', include('wishlists.urls')),
+<<<<<<< HEAD
     path('api/', include('wishlists.urls')),
+=======
+>>>>>>> 789256b09e3a3ac169df1d383f1f37a27bdfc329
     path('api/', include('quiz_results.urls')),
     path('api/', include('qnas.urls')),
     path('api/', include('qna_answers.urls')),
@@ -50,4 +53,8 @@ urlpatterns = [
     path('api/', include('systems_settings.urls')),
     path('api/', include('supports.urls')),
     path('api/', include('instructor_earnings.urls')),
+<<<<<<< HEAD
 ]
+=======
+]
+>>>>>>> 789256b09e3a3ac169df1d383f1f37a27bdfc329

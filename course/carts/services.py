@@ -28,8 +28,8 @@ def get_all_carts():
 
 def get_cart_by_user(user_id):
     try:
-        cart = Cart.objects.get(user_id=user_id)
-        serializer = CartSerializer(cart)
+        cart = Cart.objects.filter(user_id=user_id)
+        serializer = CartSerializer(cart, many=True)
         return serializer.data
     except Cart.DoesNotExist:
         raise ValidationError({"error": "Cart not found for this user."})

@@ -1,5 +1,4 @@
 from django.db import models
-from users.models import User
 from lessons.models import Lesson
 
 class QuizQuestion(models.Model):
@@ -10,7 +9,6 @@ class QuizQuestion(models.Model):
         ESSAY = 'essay'
 
     question_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quiz_question_user')
     lesson_id = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='quiz_question_lesson')
 
     question_text = models.TextField()

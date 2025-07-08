@@ -5,20 +5,28 @@ from rest_framework import status
 from .services import (
     create_wishlist,
     get_wishlist_by_id,
+    get_wishlists_by_user,
     get_all_wishlists,
     update_wishlist,
-    delete_wishlist,
-    get_wishlists_by_user
+    delete_wishlist
 )
 
 class WishlistListView(APIView):
     def get(self, request):
         try:
-            wishlists = get_all_wishlists()
-            return Response(wishlists, status=status.HTTP_200_OK)
+            if 'user_id' in request.query_params:
+                user_id = request.query_params.get('user_id')
+                wishlists = get_wishlists_by_user(user_id)
+                return Response(wishlists, status=status.HTTP_200_OK)
+            elif 'wishlist_id' in request.query_params:
+                wishlist_id = request.query_params.get('wishlist_id')
+                wishlist = get_wishlist_by_id(wishlist_id)
+                return Response(wishlist, status=status.HTTP_200_OK)
+            else:
+                wishlists = get_all_wishlists()
+                return Response(wishlists, status=status.HTTP_200_OK)
         except ValidationError as e:
-            return Response({"errors": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({"errors": str(e)}, status=status.HTTP_404_NOT_FOUND)
     def post(self, request):
         try:
             wishlist = create_wishlist(request.data)
@@ -37,21 +45,5 @@ class WishlistListView(APIView):
         try:
             result = delete_wishlist(wishlist_id)
             return Response(result, status=status.HTTP_200_OK)
-        except ValidationError as e:
-            return Response({"errors": str(e)}, status=status.HTTP_404_NOT_FOUND)
-
-class WishlistDetailView(APIView):
-    def get(self, request, wishlist_id):
-        try:
-            wishlist = get_wishlist_by_id(wishlist_id)
-            return Response(wishlist, status=status.HTTP_200_OK)
-        except ValidationError as e:
-            return Response({"errors": str(e)}, status=status.HTTP_404_NOT_FOUND)
-
-class UserWishlistView(APIView):
-    def get(self, request, user_id):
-        try:
-            wishlists = get_wishlists_by_user(user_id)
-            return Response(wishlists, status=status.HTTP_200_OK)
         except ValidationError as e:
             return Response({"errors": str(e)}, status=status.HTTP_404_NOT_FOUND)

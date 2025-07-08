@@ -24,10 +24,19 @@ class QuizQuestionManagementView(APIView):
         except ValidationError as e:
             return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, lesson_id):
+    def get(self, request):
         try:
-            quiz_questions = get_quiz_questions_by_lesson(lesson_id)
-            return Response(quiz_questions, status=status.HTTP_200_OK)
+            if 'question_id' in request.query_params:
+                question_id = request.query_params.get('question_id')
+                quiz_question = find_quiz_question_by_id(question_id)
+                return Response(quiz_question, status=status.HTTP_200_OK)
+            elif 'lesson_id' in request.query_params:
+                lesson_id = request.query_params.get('lesson_id')
+                quiz_questions = get_quiz_questions_by_lesson(lesson_id)
+                return Response(quiz_questions, status=status.HTTP_200_OK)
+            else:
+                quiz_questions = get_all_quiz_questions()
+                return Response(quiz_questions, status=status.HTTP_200_OK)
         except ValidationError as e:
             return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -42,25 +51,5 @@ class QuizQuestionManagementView(APIView):
         try:
             response = delete_quiz_question(question_id)
             return Response(response, status=status.HTTP_204_NO_CONTENT)
-        except ValidationError as e:
-            return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
-
-class QuizQuestionDetailView(APIView):
-    permission_classes = [RolePermissionFactory(['admin', 'instructor'])]
-
-    def get(self, request, question_id):
-        try:
-            quiz_question = find_quiz_question_by_id(question_id)
-            return Response(quiz_question, status=status.HTTP_200_OK)
-        except ValidationError as e:
-            return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
-
-class QuizQuestionListView(APIView):
-    permission_classes = [RolePermissionFactory(['admin', 'instructor'])]
-
-    def get(self, request):
-        try:
-            quiz_questions = get_all_quiz_questions()
-            return Response(quiz_questions, status=status.HTTP_200_OK)
         except ValidationError as e:
             return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)

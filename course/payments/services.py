@@ -4,6 +4,9 @@ from .serializers import PaymentSerializer, PaymentCreateSerializer
 from .models import Payment
 from promotions.models import Promotion
 from payment_details.serializers import PaymentDetailSerializer
+from decimal import Decimal
+from django.utils import timezone
+from courses.models import Course
 from .utils import generate_unique_transaction_id
 
 def create_payment(payment_data):

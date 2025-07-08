@@ -2,6 +2,8 @@ from django.db import models
 from admins.models import Admin
 from instructors.models import Instructor
 from courses.models import Course
+from instructors.models import Instructor
+
 class Promotion(models.Model):
     class DiscountTypeChoices(models.TextChoices):
         PERCENTAGE = 'percentage', 'percentage'

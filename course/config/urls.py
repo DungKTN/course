@@ -40,7 +40,6 @@ urlpatterns = [
     path('api/', include('promotions.urls')),
     path('api/', include('carts.urls')),
     path('api/', include('wishlists.urls')),
-
     path('api/', include('wishlists.urls')),
     path('api/', include('quiz_results.urls')),
     path('api/', include('qnas.urls')),

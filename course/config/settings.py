@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-&fdfpm3&397v^3-cay1lhfg$5ktshko79(^56-vu&)zx29eclj
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+REFUND_DAYS = 7  # Số ngày được hoàn tiền kể từ ngày mua khóa học
 VNPAY_HASH_SECRET_KEY ="BNPD5VQ9RUUJ9E3YVLEUHLF2EDA8AAYC"
 # Application definition
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
@@ -67,7 +67,10 @@ INSTALLED_APPS = [
     'systems_settings',
     'supports',
     'payments',
-    'payment_details'
+    'payment_details',
+    'instructor_earnings',
+    'instructor_payouts',
+    'instructor_levels',
 ]
 
 MIDDLEWARE = [

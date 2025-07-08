@@ -4,8 +4,8 @@ from courses.models import Course
 from promotions.models import Promotion
 class Payment_Details(models.Model):
 
-    payment_id = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name='details')
-    course_id = models.ForeignKey(Course, on_delete=models.CASCADE)
+    payment_id = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name='payment_details')
+    course_id = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='payment_details')
     price = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     final_price = models.DecimalField(max_digits=10, decimal_places=2)

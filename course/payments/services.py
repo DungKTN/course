@@ -124,6 +124,7 @@ def create_payment(payment_data):
             total_amount = total_original - total_discount
 
             # Tạo payment
+            payment_date = timezone.now()
             payment_serializer = PaymentCreateSerializer(data={
                 "user_id": user_id,
                 "amount": total_original,
@@ -131,7 +132,8 @@ def create_payment(payment_data):
                 "total_amount": total_amount,
                 "payment_method": payment_method,
                 "transaction_id": generate_unique_transaction_id(),
-                "promotion_id": promotion_id if promotion_id else None
+                "promotion_id": promotion_id if promotion_id else None,
+                "payment_date": payment_date
             })
 
             if not payment_serializer.is_valid():

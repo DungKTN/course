@@ -25,7 +25,6 @@ class Promotion(models.Model):
     used_count = models.IntegerField(default=0)
     min_purchase = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     max_discount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    min_purchase= models.DecimalField(max_digits=10, decimal_places=2, default=0)
     applicable_courses = models.ManyToManyField(Course,blank=True,related_name="promotions")
     applicable_categories = models.ManyToManyField('categories.Category', blank=True, related_name="promotions")
 # mã giảm giá admin áp cho payment , instructor áp cho danh mục khóa học và cho khóa học của người đó

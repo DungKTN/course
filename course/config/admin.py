@@ -23,6 +23,9 @@ from payments.models import Payment
 from reviews.models import Review
 from blog_posts.models import BlogPost
 from payment_details.models import Payment_Details
+from instructor_earnings.models import InstructorEarning
+from instructor_payouts.models import InstructorPayout
+from instructor_levels.models import InstructorLevel
 admin.site.register(BlogPost)
 admin.site.register(User)
 admin.site.register(Course)
@@ -47,3 +50,6 @@ admin.site.register(ForumTopic)
 admin.site.register(ForumComment)
 admin.site.register(SystemsSetting)
 admin.site.register(Support)
+admin.site.register(InstructorEarning)
+admin.site.register(InstructorPayout)
+admin.site.register(InstructorLevel)

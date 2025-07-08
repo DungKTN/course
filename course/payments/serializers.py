@@ -32,5 +32,6 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
             'discount_amount',
             'total_amount',
             'payment_method',
+            'payment_date',
         ]
         read_only_fields = []

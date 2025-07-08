@@ -12,6 +12,7 @@ from payments.models import Payment
 # from reviews.models import Review
 from reviews.models import Review
 from blog_posts.models import BlogPost
+from payment_details.models import Payment_Details
 admin.site.register(BlogPost)
 admin.site.register(User)
 admin.site.register(Course)
@@ -25,3 +26,13 @@ admin.site.register(Notification)
 admin.site.register(Promotion)
 admin.site.register(Cart)
 admin.site.register(Wishlist)
+admin.site.register(Category)
+admin.site.register(QuizQuestion)
+admin.site.register(QuizResult)
+admin.site.register(QnA)
+admin.site.register(QnAAnswer)
+admin.site.register(Forum)
+admin.site.register(ForumTopic)
+admin.site.register(ForumComment)
+admin.site.register(SystemsSetting)
+admin.site.register(Support)

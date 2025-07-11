@@ -14,7 +14,8 @@ def RolePermissionFactory(roles):
             token = auth_header.split(" ")[1]
             try:
                 payload = jwt.decode(token, JWT_SECRET, algorithms="HS256")
-                user = User.objects.get(user_id=payload["user_id"])
+                user = User.objects.select_related('instructor','admin').get(user_id=payload["user_id"])
+                # user = User.objects.get(user_id=payload["user_id"])
                 if user.status == User.StatusChoices.BANNED:
                     raise AuthenticationFailed("Tài khoản bị cấm.")
                 if user.status == User.StatusChoices.INACTIVE:
@@ -27,15 +28,20 @@ def RolePermissionFactory(roles):
                 raise AuthenticationFailed("Token không hợp lệ.")
 
             user_type = payload.get("user_type")
-            print(roles)
+            # print(roles)
+            # print(user_type)
             if not user_type:
                 raise AuthenticationFailed("Không tìm thấy thông tin người dùng trong token.")
             # if user_type:
             #     raise AuthenticationFailed("Role hiện tại: {}".format(user_type))
-            if user_type not in (roles if isinstance(roles, list) else [roles]):
-                raise PermissionDenied("Bạn không có quyền truy cập.")
+            if isinstance(user_type, list):
+                if not any(role in roles for role in user_type):
+                    raise PermissionDenied("Bạn không có quyền truy cập.")
+            else:
+                if user_type not in roles:
+                    raise PermissionDenied("Bạn không có quyền truy cập.")
             request.jwt_payload = payload
-            request.user = payload.get("user_id")
+            request.user = user
             return True
 
     return _RolePermission

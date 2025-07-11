@@ -64,11 +64,10 @@ def create_payment(payment_data):
 
                         # kiểm tra hợp lệ 
                         course_valid = promotion.applicable_courses.filter(pk=course.pk).exists()
-                        category_valid = promotion.applicable_categories.filter(pk=course.category_id.pk).exists()
 
-                        if not (course_valid or category_valid):
+                        if not (course_valid):
                             raise ValidationError(
-                                f"Khuyến mãi ID {promotion.promotion_id} không áp dụng cho khóa học {course.title} hoặc danh mục của nó."
+                                f"Khuyến mãi ID {promotion.promotion_id} không áp dụng cho khóa học {course.title}"
                             )
                         # Tính discount
                         if promotion.discount_type == Promotion.DiscountTypeChoices.PERCENTAGE:
@@ -99,9 +98,12 @@ def create_payment(payment_data):
             if promotion_id:
                 try:
                     promotion = Promotion.objects.get(promotion_id=promotion_id)
+
                     if not promotion.admin_id:
                         raise ValidationError("Mã giảm giá không hợp lệ (chỉ admin mới áp dụng toàn đơn hàng).")
-
+                    category_valid = promotion.applicable_categories.filter(pk=course.category_id.pk).exists()
+                    if not category_valid:
+                        raise ValidationError(f"Khuyến mãi ID {promotion.code} id {promotion.promotion_id}không áp dụng cho danh mục khóa học {course.category_id.name}.")
                     if promotion.status != Promotion.StatusChoices.ACTIVE:
                         raise ValidationError("Khuyến mãi không hoạt động.")
                     now = timezone.now()

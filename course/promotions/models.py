@@ -27,8 +27,7 @@ class Promotion(models.Model):
     max_discount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     applicable_courses = models.ManyToManyField(Course,blank=True,related_name="promotions")
     applicable_categories = models.ManyToManyField('categories.Category', blank=True, related_name="promotions")
-# mã giảm giá admin áp cho payment , instructor áp cho danh mục khóa học và cho khóa học của người đó
-# giảm giá danh mục thì chỉ có tác dụng với danh mục mà giảng viên đó quản lý
+# mã giảm giá admin áp cho payment, category , instructor áp cho  cho khóa học của người đó
 # giảm giá khóa học thì chỉ có tác dụng với khóa học mà giảng viên đó quản lý
 
 

@@ -97,6 +97,8 @@ def update_instructor_earning_status(earning_id, new_status):
     except Exception as e:
         raise ValidationError(f"Lỗi khi cập nhật trạng thái earnings: {str(e)}")
 def update_instructor_earning_with_payout(payout_id):
+# gán trạng thái cho earnings từ payout khi đã thanh toán hoặc hủy ,
+# chỉ chuyển từ AVAILABLE sang PAID hoặc CANCELLED
     try:
         with transaction.atomic():
             payout = InstructorPayout.objects.prefetch_related(
@@ -122,7 +124,7 @@ def update_instructor_earning_with_payout(payout_id):
                     earning.status = new_status
                     earning.instructor_payout_id = assign_payout
                     earning.save()
-
+            return InstructorEarningSerializer(earnings, many=True).data
     except InstructorPayout.DoesNotExist:
         raise ValidationError("Không tìm thấy Payout.")
     except Exception as e:
@@ -145,3 +147,4 @@ def update_earnings_available(): #cronjob
 
     except Exception as e:
         raise ValidationError(f"Lỗi khi cập nhật earnings thành AVAILABLE: {str(e)}")
+

@@ -77,7 +77,8 @@ def register(data):
 def login(data):
     try:
         if data['username'] and data['password']:
-            user = User.objects.get(username=data['username'])
+            user = User.objects.select_related('instructor', 'admin').get(username=data['username'])
+            # print(f"User found: {user}")
     except User.DoesNotExist:
          raise ValidationError({"error": "User not found."})
     if not check_password(data['password'], user.password_hash):
@@ -86,11 +87,18 @@ def login(data):
         raise ValidationError({"error": "User is not active."})
     user.last_login = timezone.now()
     user.save()
+    user_type = []
+
+    if user.admin is not None:
+        user_type.append("admin")
+
+    if user.instructor is not None:
+        user_type.append("instructor")
     payload = {
         'user_id': user.user_id,
         'username': user.username,
         'email': user.email,
-        'user_type': user.user_type,
+        'user_type': user_type,
         'exp': datetime.utcnow() + timedelta(minutes=300),
         "iat": datetime.utcnow()
     }
@@ -100,7 +108,7 @@ def login(data):
         'user_id': user.user_id,
         'username': user.username,
         'email': user.email,
-        'user_type': user.user_type,
+        'user_type': user_type,
         'exp': datetime.utcnow() + timedelta(days=3),
         "iat": datetime.utcnow()
     }
@@ -112,25 +120,29 @@ def login(data):
             'user_id': user.user_id,
             'username': user.username,
             'email': user.email,
-            'user_type': user.user_type,
+            'user_type': user_type,
         }
     }
 def refresh_token(token):
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=JWT_ALGORITHM)
-        user = User.objects.get(user_id=payload['user_id'])
+        user = User.objects.select_related('instructor', 'admin').get(user_id=payload["user_id"])
     except jwt.ExpiredSignatureError:
         raise ValidationError({"error": "Token has expired."})
     except jwt.InvalidTokenError:
         raise ValidationError({"error": "Invalid token."})
     except User.DoesNotExist:
         raise ValidationError({"error": "User not found."})
-
+    user_type = []
+    if user.admin is not None:
+        user_type.append("admin")
+    if user.instructor is not None:
+        user_type.append("instructor")
     new_payload = {
         'user_id': user.user_id,
         'username': user.username,
         'email': user.email,
-        'user_type': user.user_type,
+        'user_type': user_type,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30),
         "iat": datetime.utcnow()
     }

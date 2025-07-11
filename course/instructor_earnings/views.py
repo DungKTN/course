@@ -8,12 +8,12 @@ from .services import update_instructor_earning_with_payout,generate_instructor_
 
 class InstructorEarningsView(APIView):
     permission_classes = [RolePermissionFactory(["admin", "instructor"])]   
-    def post(self, request, payment_id):
-        try:
-            results = generate_instructor_earnings_from_payment(payment_id)
-            return Response(results, status=status.HTTP_201_CREATED)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    # def post(self, request, payment_id):
+    #     try:
+    #         results = generate_instructor_earnings_from_payment(payment_id)
+    #         return Response(results, status=status.HTTP_201_CREATED)
+    #     except ValidationError as e:
+    #         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     def get(self, request):
         status_param = request.query_params.get('status', None)
         instructor_id = request.query_params.get('instructor_id', None)

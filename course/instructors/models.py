@@ -4,7 +4,7 @@ from instructor_levels.models import InstructorLevel
 
 class Instructor(models.Model):
     instructor_id = models.AutoField(primary_key=True)
-    user_id = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
+    user_id = models.OneToOneField(User, on_delete=models.CASCADE, unique=True, related_name='instructor', null=True)
     bio = models.TextField(null=True, blank=True)
     specialization = models.CharField(max_length=255, null=True, blank=True)
     qualification = models.CharField(max_length=255, null=True, blank=True)

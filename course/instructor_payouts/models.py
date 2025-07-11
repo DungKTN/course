@@ -13,7 +13,7 @@ class InstructorPayout(models.Model):
     instructor_id = models.ForeignKey(Instructor, on_delete=models.CASCADE, related_name='payouts')
     amount = models.DecimalField(max_digits=15, decimal_places=2)         # Tổng số tiền
     fee = models.DecimalField(max_digits=15, decimal_places=2, default=0) # Phí nền tảng (nếu có)
-    net_amount = models.DecimalField(max_digits=15, decimal_places=2)     # Tiền thực nhận
+    net_amount = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)     # Tiền thực nhận
     payment_method = models.CharField(max_length=100)                     # Ví dụ: Bank Transfer
     transaction_id = models.CharField(max_length=255, blank=True, null=True)
     status = models.CharField(max_length=20, choices=PayoutStatusChoices.choices, default=PayoutStatusChoices.PENDING)

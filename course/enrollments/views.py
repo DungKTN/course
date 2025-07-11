@@ -18,7 +18,8 @@ class EnrollmentManageByUserView(APIView):
     permission_classes = [RolePermissionFactory(['admin', 'instructor', 'student'])]
 
     def get(self, request):
-        user = request.user
+        user = request.user.user_id
+        print(f"Fetching enrollments for user: {user}")
         enrollments = get_enrollment_by_user(user)
         return Response(enrollments, status=status.HTTP_200_OK)
     def post(self, request):

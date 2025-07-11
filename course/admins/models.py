@@ -3,7 +3,7 @@ from users.models import User
 
 class Admin(models.Model):
     admin_id = models.AutoField(primary_key=True)  
-    user_id = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_user', null=True, unique=True)
+    user_id = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin', null=True, unique=True)
     department = models.CharField(max_length=100)  
     role = models.CharField(max_length=100, default='none')
     created_at = models.DateTimeField(auto_now_add=True)

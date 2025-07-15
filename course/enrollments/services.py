@@ -87,3 +87,9 @@ def has_access(user_id, course_id):
 #         raise ValidationError({"error": "Enrollment not found."})
 #     except Exception as e:
 #         raise ValidationError({"error": str(e)})
+def user_has_course_access(student_id, course_id):
+    return Enrollment.objects.filter(
+        student_id=student_id,
+        course_id=course_id,
+        status='Active'
+    ).exists()

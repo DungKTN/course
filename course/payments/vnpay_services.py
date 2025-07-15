@@ -16,6 +16,7 @@ from datetime import datetime
 from payments.vnpay import vnpay
 from django.conf import settings
 from decimal import Decimal
+from instructor_earnings.services import generate_instructor_earnings_from_payment
 # from orders.models import Order
 # VNPAY cấu hình
 
@@ -126,6 +127,13 @@ def payment_return(request):
                     payment.payment_gateway = 'vnpay'
                     payment.save()
                     print(f"Payment {order_id} completed successfully.")
+                    # Generate instructor earnings from the payment
+                    try:
+                        generate_instructor_earnings_from_payment(payment)
+                    except Exception as e:
+                        print(f"Error generating instructor earnings: {str(e)}")
+                        return JsonResponse({"error": "Failed to generate instructor earnings"}, status=500)
+
                 else:
                     payment = Payment.objects.get(payment_id=order_id)
                     if not payment:

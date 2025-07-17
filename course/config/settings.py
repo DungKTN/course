@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&fdfpm3&397v^3-cay1lhfg$5ktshko79(^56-vu&)zx29eclj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'https://dashboard.render.com/web/srv-d1sfgrfdiees73fhpme0/deploys/dep-d1sfgrvdiees73fhpmrg']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'course-604d.onrender.com',  'https://dashboard.render.com/web/srv-d1sfgrfdiees73fhpme0/deploys/dep-d1sfgrvdiees73fhpmrg']
 
 REFUND_DAYS = 7  # Số ngày được hoàn tiền kể từ ngày mua khóa học
 VNPAY_HASH_SECRET_KEY ="BNPD5VQ9RUUJ9E3YVLEUHLF2EDA8AAYC"

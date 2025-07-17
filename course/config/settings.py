@@ -25,13 +25,15 @@ SECRET_KEY = 'django-insecure-&fdfpm3&397v^3-cay1lhfg$5ktshko79(^56-vu&)zx29eclj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'https://dashboard.render.com/web/srv-d1sfgrfdiees73fhpme0/deploys/dep-d1sfgrvdiees73fhpmrg']
+
 REFUND_DAYS = 7  # Số ngày được hoàn tiền kể từ ngày mua khóa học
 VNPAY_HASH_SECRET_KEY ="BNPD5VQ9RUUJ9E3YVLEUHLF2EDA8AAYC"
 # Application definition
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
 VNPAY_TMN_CODE = "9AHLD0UQ"
-VNPAY_RETURN_URL = "http://127.0.0.1:8000/api/vnpay/return/"
+# VNPAY_RETURN_URL = "http://127.0.0.1:8000/api/vnpay/return/"
+VNPAY_RETURN_URL = "https://dashboard.render.com/web/srv-d1sfgrfdiees73fhpme0/deploys/dep-d1sfgrvdiees73fhpmrg/api/vnpay/return/"
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -101,7 +103,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases

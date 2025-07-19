@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import dj_database_url
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,13 +25,15 @@ SECRET_KEY = 'django-insecure-&fdfpm3&397v^3-cay1lhfg$5ktshko79(^56-vu&)zx29eclj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'course-604d.onrender.com',  'https://dashboard.render.com/web/srv-d1sfgrfdiees73fhpme0/deploys/dep-d1sfgrvdiees73fhpmrg']
+
 REFUND_DAYS = 7  # Số ngày được hoàn tiền kể từ ngày mua khóa học
 VNPAY_HASH_SECRET_KEY ="BNPD5VQ9RUUJ9E3YVLEUHLF2EDA8AAYC"
 # Application definition
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
 VNPAY_TMN_CODE = "9AHLD0UQ"
-VNPAY_RETURN_URL = "http://127.0.0.1:8000/api/vnpay/return/"
+# VNPAY_RETURN_URL = "http://127.0.0.1:8000/api/vnpay/return/"
+VNPAY_RETURN_URL = "https://dashboard.render.com/web/srv-d1sfgrfdiees73fhpme0/deploys/dep-d1sfgrvdiees73fhpmrg/api/vnpay/return/"
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -101,18 +103,23 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
     }
-}
-
+else:
+    print("⚠️ Warning: DATABASE_URL not set. Using SQLite for local development.")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -149,6 +156,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

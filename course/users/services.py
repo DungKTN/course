@@ -89,10 +89,12 @@ def login(data):
     user.save()
     user_type = []
 
-    if user.admin is not None:
-        user_type.append("admin")
+    admin = getattr(user, "admin", None)
+    instructor = getattr(user, "instructor", None)
 
-    if user.instructor is not None:
+    if admin:
+        user_type.append("admin")
+    if instructor:
         user_type.append("instructor")
     payload = {
         'user_id': user.user_id,
@@ -134,9 +136,12 @@ def refresh_token(token):
     except User.DoesNotExist:
         raise ValidationError({"error": "User not found."})
     user_type = []
-    if user.admin is not None:
+    admin = getattr(user, "admin", None)
+    instructor = getattr(user, "instructor", None)
+
+    if admin:
         user_type.append("admin")
-    if user.instructor is not None:
+    if instructor:
         user_type.append("instructor")
     new_payload = {
         'user_id': user.user_id,

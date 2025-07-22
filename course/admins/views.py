@@ -19,7 +19,6 @@ class AdminManagementView(APIView):
     permission_classes = [RolePermissionFactory("admin")]
     def post(self, request,):
         try:
-
             admin = create_admin(request.data)
             print("Admin created successfully:", admin)
             return Response(admin, status=status.HTTP_201_CREATED)

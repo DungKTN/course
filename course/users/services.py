@@ -156,3 +156,13 @@ def refresh_token(token):
         'access_token': new_token,
         'message': "Token refreshed successfully.",
     }
+def active_user(user_id):
+    try:
+        user = User.objects.get(user_id=user_id)
+        if user.status == 'active':
+            raise ValidationError({"error": "User is already active."})
+        user.status = 'active'
+        user.save()
+        return {"message": "User activated successfully."}
+    except User.DoesNotExist:
+        raise ValidationError({"error": "User not found."})

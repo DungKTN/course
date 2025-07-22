@@ -6,6 +6,7 @@ from datetime import datetime
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from decimal import Decimal
+from decimal import ROUND_HALF_UP
 refund_conditions = 50
 def refund_request(payment_id, payment_details_ids , reason=None):
     try:
@@ -41,8 +42,25 @@ def refund_request(payment_id, payment_details_ids , reason=None):
                     detail.refund_status = Payment_Details.RefundStatus.PENDING
                     detail.refund_request_time = timezone.now()
                     detail.refund_reason = reason
-                    detail.refund_amount =Decimal(( detail.final_price/ payment.amount) * payment.total_amount, 2)
+                    detail.refund_amount = (
+                        (Decimal(detail.final_price) / Decimal(payment.amount)) * Decimal(payment.total_amount)
+                    ).quantize(Decimal("0.00"), rounding=ROUND_HALF_UP)
+
+
                     detail.save()
+                return {
+                    "message": "Refund request submitted successfully.",
+                    "refund_items": [
+                        {
+                            "payment_detail_id": detail.id,
+                            "course_id": detail.course_id,
+                            "refund_amount": detail.refund_amount,
+                            "refund_status": detail.refund_status,
+                            "refund_reason": detail.refund_reason,
+                        }
+                        for detail in refund_items
+                    ]
+                }
                         
     except  Exception as e:
         raise ValidationError(f"Error processing refund: {str(e)}")

@@ -1,22 +1,21 @@
 from rest_framework.exceptions import ValidationError
 from .serializers import PaymentSerializer
 from .models import Payment
+from payment_details.models import Payment_Details
 from datetime import datetime
 from courses.models import Course
 from django.db import IntegrityError
-import hashlib
-import hmac
 import urllib.parse
 from django.http import JsonResponse, HttpRequest
 from django.utils import timezone
 from datetime import timedelta
-import hashlib
-import pytz
 from datetime import datetime
 from payments.vnpay import vnpay
 from django.conf import settings
 from decimal import Decimal
 from instructor_earnings.services import generate_instructor_earnings_from_payment
+import pytz, uuid, hmac, hashlib, requests
+from django.db import transaction
 # from orders.models import Order
 # VNPAY cấu hình
 
@@ -194,10 +193,26 @@ def payment_ipn(request):
             totalamount = True
             if totalamount:
                 if firstTimeUpdate:
-                    if vnp_ResponseCode == '00':
-                        print('Payment Success. Your code implement here')
-                    else:
-                        print('Payment Error. Your code implement here')
+                    if vnp_ResponseCode == "00":
+                        try:
+                            payment = Payment.objects.get(payment_id=order_id)
+                        except Payment.DoesNotExist:
+                            return JsonResponse({'RspCode': '01', 'Message': 'Order not found'})
+                        payment.payment_status = 'completed'
+                        if Decimal(payment.total_amount) != Decimal(amount):
+                            raise ValidationError("Payment amount mismatch")
+                        payment.transaction_id = vnp_TransactionNo
+                        payment.payment_date = datetime.now()
+                        payment.gateway_response = vnp_ResponseCode
+                        payment.payment_gateway = 'vnpay'
+                        payment.save()
+                        print(f"Payment {order_id} completed successfully.")
+                        # Generate instructor earnings from the payment
+                        try:
+                            generate_instructor_earnings_from_payment(payment)
+                        except Exception as e:
+                            print(f"Error generating instructor earnings: {str(e)}")
+                            return JsonResponse({"error": "Failed to generate instructor earnings"}, status=500)
 
                     # Return VNPAY: Merchant update success
                     result = JsonResponse({'RspCode': '00', 'Message': 'Confirm Success'})
@@ -216,3 +231,79 @@ def payment_ipn(request):
     return result
 
 # def local_ipn()
+def send_vnpay_refund_request(payment_detail_id, reason):
+    try:
+        from payments.vnpay import vnpay  # Nếu bạn có lớp vnpay helper thì dùng lại
+        payment_detail = Payment_Details.objects.select_related('payment_id').get(id=payment_detail_id)
+        if payment_detail.refund_status != Payment_Details.RefundStatus.APPROVED:
+            raise ValidationError("Refund must be approved before processing.")
+
+        payment = payment_detail.payment_id
+        if payment.payment_status != Payment.PaymentStatus.COMPLETED:
+            raise ValidationError("Only completed payments can be refunded.")
+
+        # Thông tin cần thiết
+        vnp_TmnCode = settings.VNPAY_TMN_CODE
+        vnp_HashSecret = settings.VNPAY_HASH_SECRET_KEY
+        vnp_Url = settings.VNPAY_REFUND_URL  # Dùng URL refund: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
+
+        vnp_TxnRef = payment.payment_id
+        vnp_TransactionNo = payment.transaction_id
+        vnp_Amount = int(payment_detail.refund_amount * 100)  # VNPAY yêu cầu nhân 100
+        vnp_TransactionDate = payment.payment_date.strftime('%Y%m%d%H%M%S')  # Theo định dạng của VNPAY
+        vnp_RequestId = str(uuid.uuid4())
+        vnp_CreateBy = "admin"
+        vnp_Command = "refund"
+        vnp_CurrCode = "VND"
+        vnp_RefundType = "02"  # 01 = full, 02 = partial
+        vnp_IpAddr = "127.0.0.1"
+        vnp_OrderInfo = f"Refund for transaction {vnp_TransactionNo}"
+
+        request_data = {
+            "vnp_RequestId": vnp_RequestId,
+            "vnp_Version": "2.1.0",
+            "vnp_Command": vnp_Command,
+            "vnp_TmnCode": vnp_TmnCode,
+            "vnp_TransactionType": vnp_RefundType,
+            "vnp_TxnRef": vnp_TxnRef,
+            "vnp_Amount": str(vnp_Amount),
+            "vnp_TransactionNo": vnp_TransactionNo,
+            "vnp_TransactionDate": vnp_TransactionDate,
+            "vnp_CreateBy": vnp_CreateBy,
+            "vnp_CreateDate": timezone.now().strftime("%Y%m%d%H%M%S"),
+            "vnp_IpAddr": vnp_IpAddr,
+            "vnp_OrderInfo": vnp_OrderInfo,
+        }
+
+        # Sắp xếp và ký
+        sorted_data = sorted(request_data.items())
+        query_string = '&'.join([f"{k}={v}" for k, v in sorted_data])
+        secure_hash = hmacsha512(vnp_HashSecret, query_string)
+        request_data["vnp_SecureHash"] = secure_hash
+
+        # Gửi yêu cầu đến VNPAY
+        response = requests.post(vnp_Url, json=request_data, headers={'Content-Type': 'application/json'})
+        response_data = response.json()
+        print(f"VNPAY Refund Response: {response_data}")
+
+        if response_data.get("vnp_ResponseCode") == "00":
+            # Thành công
+            payment_detail.refund_status = Payment_Details.RefundStatus.SUCCESS
+            payment_detail.refund_transaction_id = response_data.get("vnp_TransactionNo")
+            payment_detail.refund_date = timezone.now()
+            payment_detail.save()
+
+            payment.refund_amount += payment_detail.refund_amount
+            payment.save()
+        else:
+            # Thất bại
+            payment_detail.refund_status = Payment_Details.RefundStatus.FAILED
+            payment_detail.refund_response_code = response_data.get("vnp_ResponseCode")
+            payment_detail.save()
+
+            raise ValidationError(f"Refund failed: {response_data.get('vnp_Message')}")
+
+        return response_data
+
+    except Exception as e:
+        raise ValidationError(f"Error sending refund to VNPAY: {str(e)}")

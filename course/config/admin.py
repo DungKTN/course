@@ -53,3 +53,4 @@ admin.site.register(Support)
 admin.site.register(InstructorEarning)
 admin.site.register(InstructorPayout)
 admin.site.register(InstructorLevel)
+

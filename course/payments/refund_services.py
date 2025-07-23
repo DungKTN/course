@@ -8,7 +8,7 @@ from rest_framework.exceptions import ValidationError
 from decimal import Decimal
 from decimal import ROUND_HALF_UP
 refund_conditions = 50
-def refund_request(payment_id, payment_details_ids , reason=None):
+def user_refund_request(payment_id, payment_details_ids , reason=None):
     try:
         with transaction.atomic():
             try:

@@ -20,7 +20,7 @@ class VnpayIPNView(APIView):
         try:
             returnData = payment_ipn(request)
             # Assuming payment_return is a function that handles the return logic
-            return Response(returnData, status=status.HTTP_200_OK)
+            return returnData
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 class CreatePaymentRecordView(APIView):

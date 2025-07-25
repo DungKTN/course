@@ -26,6 +26,7 @@ from payment_details.models import Payment_Details
 from instructor_earnings.models import InstructorEarning
 from instructor_payouts.models import InstructorPayout
 from instructor_levels.models import InstructorLevel
+from support_replies.models import SupportReply
 admin.site.register(BlogPost)
 admin.site.register(User)
 admin.site.register(Course)
@@ -53,4 +54,4 @@ admin.site.register(Support)
 admin.site.register(InstructorEarning)
 admin.site.register(InstructorPayout)
 admin.site.register(InstructorLevel)
-
+admin.site.register(SupportReply)

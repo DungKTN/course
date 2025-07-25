@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     'instructor_earnings',
     'instructor_payouts',
     'instructor_levels',
+    'support_replies',
 ]
 
 MIDDLEWARE = [

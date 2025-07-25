@@ -26,7 +26,18 @@ SECRET_KEY = 'django-insecure-&fdfpm3&397v^3-cay1lhfg$5ktshko79(^56-vu&)zx29eclj
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'course-604d.onrender.com',  'https://dashboard.render.com/web/srv-d1sfgrfdiees73fhpme0/deploys/dep-d1sfgrvdiees73fhpmrg']
+def get_env(key, default=None, required=False):
+    value = os.getenv(key, default)
+    if not value:
+        print(f"⚠️ Warning: {key} not set. Please set it in your environment variables.")
+        if required:
+            raise EnvironmentError(f"❌ {key} is required but not set.")
+    return value
 
+# Cloudinary config values
+CLOUDINARY_CLOUD_NAME = get_env("CLOUDINARY_CLOUD_NAME", default="dqzopvk2t")
+CLOUDINARY_API_KEY = get_env("CLOUDINARY_API_KEY", default="791785722646617")
+CLOUDINARY_API_SECRET = get_env("CLOUDINARY_API_SECRET", default="eYOL6HTUSbXlZNdtAyY4chQlgrk")
 REFUND_DAYS = 7  # Số ngày được hoàn tiền kể từ ngày mua khóa học
 VNPAY_HASH_SECRET_KEY ="BNPD5VQ9RUUJ9E3YVLEUHLF2EDA8AAYC"
 # Application definition
@@ -42,6 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
+    'cloudinary_storage',
     'users',
     'rest_framework',
     'config',

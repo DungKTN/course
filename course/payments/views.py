@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from .vnpay_services import create_vnpay_payment, send_vnpay_refund_request
 from .vnpay_services import  payment_ipn
 from .services import create_payment
-from refund_services import admin_update_refund_status, user_cancel_refund_request, get_refund_details, user_refund_request
+from .refund_services import admin_update_refund_status, user_cancel_refund_request, get_refund_details, user_refund_request
 
 class CreateVnpayPaymentView(APIView):
     def post(self, request):
@@ -20,7 +20,7 @@ class VnpayIPNView(APIView):
         try:
             returnData = payment_ipn(request)
             # Assuming payment_return is a function that handles the return logic
-            return Response(returnData, status=status.HTTP_200_OK)
+            return returnData
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 class CreatePaymentRecordView(APIView):

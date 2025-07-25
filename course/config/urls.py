@@ -50,5 +50,7 @@ urlpatterns = [
     path('api/', include('supports.urls')),
     path('api/', include('instructor_earnings.urls')),
     path('api/', include('instructor_payouts.urls')),
+    path('api/', include('support_replies.urls')),
+    path('api/', include('utils.upload.urls')),     # /api/cloudinary/upload/
     
 ]
